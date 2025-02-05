@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    private static final String SECRET_KEY = "my_super_secret_key_which_is_very_secure_12345"; // Debe ser más segura y guardada en variables de entorno
+    private static final String SECRET_KEY = "my_super_secret_key_which_is_very_secure_12345";
     private static final long EXPIRATION_TIME = 86400000; 
 
     private Key getSigningKey() {

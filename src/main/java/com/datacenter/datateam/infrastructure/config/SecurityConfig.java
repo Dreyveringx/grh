@@ -33,7 +33,6 @@ public class SecurityConfig {
                 .requestMatchers("/auth/login", "/auth/register").permitAll() 
                 .anyRequest().authenticated() 
             )
-            .cors(cors -> cors.disable())
             .csrf(csrf -> csrf.disable()) 
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         

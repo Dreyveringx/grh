@@ -22,10 +22,6 @@ public class AuthController {
         String nuip = credentials.get("nuip");
         String password = credentials.get("password");
 
-        if (nuip == null || password == null || nuip.isEmpty() || password.isEmpty()) {
-            return ResponseEntity.status(400).body(Map.of("error", "El nuip y la contraseña son obligatorios"));
-        }
-
         Optional<String> token = authService.authenticate(nuip, password);
 
         return token.map(jwt -> ResponseEntity.ok(Map.of("token", jwt)))
@@ -34,15 +30,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) {
-        System.out.println("Datos recibidos: " + user);
-
-        if (user.getNuip() == null || user.getNuip().isEmpty()) {
-            return ResponseEntity.status(400).body("El campo 'nuip' es obligatorio");
-        }
-        if (user.getPassword() == null || user.getPassword().isEmpty()) {
-            return ResponseEntity.status(400).body("El campo 'password' es obligatorio");
-        }
-
         boolean userCreated = authService.registerUser(user);
 
         if (userCreated) {
@@ -51,5 +38,4 @@ public class AuthController {
             return ResponseEntity.status(400).body("El usuario ya existe");
         }
     }
-
 }

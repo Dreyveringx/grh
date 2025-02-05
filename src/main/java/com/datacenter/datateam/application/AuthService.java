@@ -1,8 +1,5 @@
 package com.datacenter.datateam.application;
 
-
-
-
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,18 +10,18 @@ import com.datacenter.datateam.infrastructure.repository.UserRepository;
 import com.datacenter.datateam.infrastructure.security.JwtUtil;
 
 import java.util.Optional;
- 
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
- 
+
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
- 
+
     public Optional<String> authenticate(String nuip, String password) {
         return userRepository.findByNuip(nuip)
-                .filter(user -> password.equals(user.getPassword()))
+        .filter(user -> passwordEncoder.matches(password, user.getPassword()))
                 .map(user -> {
                     String token = jwtUtil.generateToken(user.getNuip());
                     System.out.println("Generated JWT: " + token);
@@ -32,9 +29,12 @@ public class AuthService {
                 });
     }
 
-    public boolean registerUser(User user){
-        if (userRepository.existsByNuip(user.getNuip())){
+    public boolean registerUser(User user) {
+        if (userRepository.existsByNuip(user.getNuip())) {
             return false;
+        }
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("La contraseña no puede ser nula o vacía");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
