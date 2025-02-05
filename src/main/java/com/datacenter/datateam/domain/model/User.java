@@ -7,8 +7,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -26,12 +25,12 @@ public class User {
 
 
     @Column(nullable = false)
-    private String contraseña;
+    private String Password;
 
 
-public void setContraseña(String contraseña) {
+public void setPassword(String Password) {
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    this.contraseña = passwordEncoder.encode(contraseña);
+    this.Password = passwordEncoder.encode(Password);
 }
 
 }

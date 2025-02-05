@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TipoDocumento {
+public class DocumentType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

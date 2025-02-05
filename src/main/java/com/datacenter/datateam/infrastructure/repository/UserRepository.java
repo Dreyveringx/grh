@@ -8,4 +8,5 @@ import com.datacenter.datateam.domain.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long>{
     Optional<User> findByNuip(String nuip);
+    boolean existsByNuip(String nuip);
 }

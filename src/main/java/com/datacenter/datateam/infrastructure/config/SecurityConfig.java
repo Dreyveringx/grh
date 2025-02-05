@@ -19,6 +19,7 @@ public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+    
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -29,7 +30,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/auth/login").permitAll() 
+                .requestMatchers("/auth/login", "auth/register").permitAll() 
                 .anyRequest().authenticated() 
             )
             .csrf(csrf -> csrf.disable()) 
