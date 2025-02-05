@@ -1,11 +1,12 @@
-package com.datacenter.datateam.infrastructure.controller;
+package com.datacenter.datateam.infrastructure.adapters.in.rest.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.datacenter.datateam.application.AuthService;
-import com.datacenter.datateam.domain.model.User;
+import com.datacenter.datateam.application.exceptions.UsuarioInvalidoException;
+import com.datacenter.datateam.application.useCases.AuthService;
+import com.datacenter.datateam.domain.models.User;
 
 import java.util.Map;
 import java.util.Optional;
@@ -30,12 +31,12 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) {
-        boolean userCreated = authService.registerUser(user);
-
-        if (userCreated) {
+        try {
+            authService.registerUser(user);
             return ResponseEntity.status(201).body("Usuario registrado exitosamente");
-        } else {
-            return ResponseEntity.status(400).body("El usuario ya existe");
+        } catch (UsuarioInvalidoException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 }
+

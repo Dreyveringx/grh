@@ -1,4 +1,4 @@
-package com.datacenter.datateam.domain.model;
+package com.datacenter.datateam.domain.models;
 
 
 import jakarta.persistence.*;

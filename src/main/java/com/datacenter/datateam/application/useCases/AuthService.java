@@ -1,12 +1,13 @@
-package com.datacenter.datateam.application;
+package com.datacenter.datateam.application.useCases;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.datacenter.datateam.domain.model.User;
-import com.datacenter.datateam.infrastructure.repository.UserRepository;
+import com.datacenter.datateam.application.exceptions.UsuarioInvalidoException;
+import com.datacenter.datateam.domain.models.User;
+import com.datacenter.datateam.infrastructure.adapters.out.databases.UserRepository;
 import com.datacenter.datateam.infrastructure.security.JwtUtil;
 
 import java.util.Optional;
@@ -31,13 +32,9 @@ public class AuthService {
 
     public boolean registerUser(User user) {
         if (userRepository.existsByNuip(user.getNuip())) {
-            return false;
-        }
-        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
-            throw new IllegalArgumentException("La contraseña no puede ser nula o vacía");
+            throw new UsuarioInvalidoException("El usuario ya existe");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         userRepository.save(user);
         return true;
     }
