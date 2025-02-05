@@ -1,6 +1,5 @@
 package com.datacenter.datateam.infrastructure.controller;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,18 +29,27 @@ public class AuthController {
         Optional<String> token = authService.authenticate(nuip, password);
 
         return token.map(jwt -> ResponseEntity.ok(Map.of("token", jwt)))
-                    .orElseGet(() -> ResponseEntity.status(401).body(Map.of("error", "Credenciales incorrectas")));
+                .orElseGet(() -> ResponseEntity.status(401).body(Map.of("error", "Credenciales incorrectas")));
     }
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) {
+        System.out.println("Datos recibidos: " + user);
+
+        if (user.getNuip() == null || user.getNuip().isEmpty()) {
+            return ResponseEntity.status(400).body("El campo 'nuip' es obligatorio");
+        }
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            return ResponseEntity.status(400).body("El campo 'password' es obligatorio");
+        }
+
         boolean userCreated = authService.registerUser(user);
 
         if (userCreated) {
             return ResponseEntity.status(201).body("Usuario registrado exitosamente");
-        }else {
+        } else {
             return ResponseEntity.status(400).body("El usuario ya existe");
         }
     }
-}
 
+}

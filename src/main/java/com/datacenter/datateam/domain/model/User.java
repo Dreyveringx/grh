@@ -3,6 +3,7 @@ package com.datacenter.datateam.domain.model;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -23,15 +24,13 @@ public class User {
     @Column(unique = true, nullable = false)
     private String nuip;
 
-
     @Column(nullable = false)
-    private String Password;
+    @NotBlank(message = "El campo 'password' es obligatorio")
+    private String password;
 
+    public void setPassword(String password) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        this.password = passwordEncoder.encode(password);
+    }
 
-public void setPassword(String Password) {
-    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    this.Password = passwordEncoder.encode(Password);
 }
-
-}
-

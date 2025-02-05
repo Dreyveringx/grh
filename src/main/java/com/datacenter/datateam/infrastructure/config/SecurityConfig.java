@@ -30,9 +30,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/auth/login", "auth/register").permitAll() 
+                .requestMatchers("/auth/login", "/auth/register").permitAll() 
                 .anyRequest().authenticated() 
             )
+            .cors(cors -> cors.disable())
             .csrf(csrf -> csrf.disable()) 
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         
