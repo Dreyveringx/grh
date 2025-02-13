@@ -19,7 +19,6 @@ public class RoleService implements RoleOutputPort{
         roleRepository.save(role);
     }
     public void createRole(Role role) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'createRole'");
     }
 }

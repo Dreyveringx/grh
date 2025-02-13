@@ -18,7 +18,6 @@ public class DocumentTypeService implements DocumentTypeOutputPort{
         documentTypeRepository.save(documentType);
     }
     public void createDocumentType(DocumentType documentType) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'createDocumentType'");
     }
 }

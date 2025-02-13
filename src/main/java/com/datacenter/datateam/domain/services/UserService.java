@@ -20,7 +20,6 @@ public class UserService implements UserOutputPort {
     }
 
     public void registerUser(User user) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'registerUser'");
     }
 }
