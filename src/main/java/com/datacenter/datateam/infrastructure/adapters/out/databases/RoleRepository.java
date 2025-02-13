@@ -1,5 +1,5 @@
 package com.datacenter.datateam.infrastructure.adapters.out.databases;
 
-public class UserRepository {
+public class RoleRepository {
 
 }
