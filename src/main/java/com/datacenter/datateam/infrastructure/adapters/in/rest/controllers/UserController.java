@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import com.datacenter.datateam.application.useCases.RegisterUserUseCase;
 import com.datacenter.datateam.domain.models.User;
 import com.datacenter.datateam.infrastructure.adapters.in.rest.controllers.requests.RegisterUserRequest;
+import com.datacenter.datateam.infrastructure.mappers.UserMapper;
 
 @RestController
 @RequestMapping("/users")

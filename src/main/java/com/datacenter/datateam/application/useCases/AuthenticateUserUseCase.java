@@ -10,7 +10,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import com.datacenter.datateam.infrastructure.adapters.in.rest.controllers.requests.LoginRequest;
+import com.datacenter.datateam.infrastructure.adapters.in.rest.controllers.responses.LoginResponse;
 import com.datacenter.datateam.infrastructure.adapters.out.security.JwtUtil;
+import com.datacenter.datateam.infrastructure.ports.in.AuthInputPort;
 
 @Component
 @AllArgsConstructor

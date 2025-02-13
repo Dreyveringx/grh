@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import com.datacenter.datateam.application.useCases.CreateRoleUseCase;
 import com.datacenter.datateam.domain.models.Role;
 import com.datacenter.datateam.infrastructure.adapters.in.rest.controllers.requests.CreateRoleRequest;
+import com.datacenter.datateam.infrastructure.mappers.RoleMapper;
 
 @RestController
 @RequestMapping("/roles")

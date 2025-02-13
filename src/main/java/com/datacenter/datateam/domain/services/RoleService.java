@@ -1,19 +1,25 @@
 package com.datacenter.datateam.domain.services;
 
 
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.datacenter.datateam.domain.models.Role;
+import com.datacenter.datateam.infrastructure.adapters.out.databases.RoleRepository;
 import com.datacenter.datateam.infrastructure.ports.out.RoleOutputPort;
 
 @Service
-@AllArgsConstructor
-public class RoleService {
-    private final RoleOutputPort roleOutputPort;
+public class RoleService implements RoleOutputPort{
+    private final RoleRepository roleRepository;
 
+    public RoleService(RoleRepository roleRepository) {
+            this.roleRepository = roleRepository;
+    }
+    @Override
+    public void save(Role role) {
+        roleRepository.save(role);
+    }
     public void createRole(Role role) {
-        // Lógica de negocio para crear un rol
-        roleOutputPort.save(role);
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'createRole'");
     }
 }

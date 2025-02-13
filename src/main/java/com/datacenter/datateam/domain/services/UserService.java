@@ -1,18 +1,26 @@
 package com.datacenter.datateam.domain.services;
 
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.datacenter.datateam.domain.models.User;
+import com.datacenter.datateam.infrastructure.adapters.out.databases.UserRepository;
 import com.datacenter.datateam.infrastructure.ports.out.UserOutputPort;
 
 @Service
-@AllArgsConstructor
-public class UserService {
-    private final UserOutputPort userOutputPort;
+public class UserService implements UserOutputPort {
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public void save(User user) {
+        userRepository.save(user);
+    }
 
     public void registerUser(User user) {
-        // Lógica de negocio para registrar un usuario
-        userOutputPort.save(user);
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'registerUser'");
     }
 }

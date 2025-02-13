@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import com.datacenter.datateam.application.useCases.CreateDocumentTypeUseCase;
 import com.datacenter.datateam.domain.models.DocumentType;
 import com.datacenter.datateam.infrastructure.adapters.in.rest.controllers.requests.CreateDocumentTypeRequest;
+import com.datacenter.datateam.infrastructure.mappers.DocumentTypeMapper;
 
 @RestController
 @RequestMapping("/document-types")
