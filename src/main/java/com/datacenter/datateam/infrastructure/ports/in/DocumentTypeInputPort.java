@@ -1,5 +1,7 @@
 package com.datacenter.datateam.infrastructure.ports.in;
 
-public interface DocumentTypeInputPort {
+import com.datacenter.datateam.domain.models.DocumentType;
 
+public interface DocumentTypeInputPort {
+    void createDocumentType(DocumentType documentType);
 }

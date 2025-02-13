@@ -1,5 +1,10 @@
 package com.datacenter.datateam.infrastructure.adapters.in.rest.controllers.responses;
 
-public class CreateDocumentTypeResponse {
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
+@Data
+@AllArgsConstructor
+public class CreateDocumentTypeResponse {
+    private String message;
 }
