@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class Parameter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "category", nullable = false)
     private String category;

@@ -5,7 +5,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 public class ParameterResponse {
-    private Long id;
+    private Integer id;
     private String category;
     private String name;
     private String value;
