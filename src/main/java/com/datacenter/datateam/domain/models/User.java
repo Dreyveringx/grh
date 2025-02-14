@@ -1,5 +1,6 @@
 package com.datacenter.datateam.domain.models;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,10 +37,10 @@ public class User {
     private Attachments documentFile;*/
 
     @Column(name = "birth_date")
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @Column(name = "document_issue_date")
-    private Date documentIssueDate;
+    private LocalDate documentIssueDate;
 
     @ManyToOne
     @JoinColumn(name = "document_issue_city_id", nullable = false)
