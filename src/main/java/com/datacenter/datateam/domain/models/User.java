@@ -3,9 +3,7 @@ package com.datacenter.datateam.domain.models;
 import java.util.List;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.*;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "users", schema = "private")
@@ -23,24 +21,25 @@ public class User {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    // @ManyToOne
-    // @JoinColumn(name = "document_type_id", nullable = false)
-    // private DocumentType documentType;
+    @ManyToOne
+    @JoinColumn(name = "document_type_id")
+    private Parameter documentType;
+
 
     @Column(name = "document_number", nullable = false, unique = true)
     private String documentNumber;
 
-    // @ManyToOne
-    // @JoinColumn(name = "document_issue_city_id", nullable = false)
-    // private City documentIssueCity;
+    @ManyToOne
+    @JoinColumn(name = "document_issue_city_id", nullable = false)
+    private City documentIssueCity;
 
-    // @ManyToOne
-    // @JoinColumn(name = "nationality_id", nullable = false)
-    // private Nationality nationality;
+    @ManyToOne
+    @JoinColumn(name = "nationality_id", nullable = false)
+    private Nationality nationality;
 
-    // @ManyToOne
-    // @JoinColumn(name = "marital_status_id", nullable = false)
-    // private Parameter maritalStatus;
+    @ManyToOne
+    @JoinColumn(name = "marital_status_id", nullable = false)
+    private Parameter maritalStatus;
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
@@ -48,13 +47,13 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    // @ManyToOne
-    // @JoinColumn(name = "company_id")
-    // private Company company;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
 
-    // @ManyToOne
-    // @JoinColumn(name = "position_id")
-    // private Position position;
+    @ManyToOne
+    @JoinColumn(name = "position_id")
+    private Position position;
 
     @ManyToMany
     @JoinTable(
@@ -64,7 +63,7 @@ public class User {
     )
     private List<Role> roles;
 
-    // @ManyToOne
-    // @JoinColumn(name = "status_id")
-    // private UserStatus status;
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    private UserStatus status;
 }
