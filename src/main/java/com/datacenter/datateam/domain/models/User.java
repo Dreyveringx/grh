@@ -1,5 +1,6 @@
 package com.datacenter.datateam.domain.models;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -29,6 +30,17 @@ public class User {
     @Column(name = "document_number", nullable = false, unique = true)
     private String documentNumber;
 
+    //Crear entidad Attachments
+    /*@ManyToOne
+    @JoinColumn(name = "document_file_id", nullable = false)
+    private Attachments documentFile;*/
+
+    @Column(name = "birth_date")
+    private Date birthDate;
+
+    @Column(name = "document_issue_date")
+    private Date documentIssueDate;
+
     @ManyToOne
     @JoinColumn(name = "document_issue_city_id", nullable = false)
     private City documentIssueCity;
@@ -41,11 +53,19 @@ public class User {
     @JoinColumn(name = "marital_status_id", nullable = false)
     private Parameter maritalStatus;
 
+    @Column(name= "has_house")
+    private Boolean hasHouse;
+
+    @Column(name = "has_children")
+    private Boolean hasChildren;
+
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
-    private String password;
+    @Column(name = "email_2", unique = true)
+    private String email2;
+
+    private String phone;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
@@ -55,6 +75,22 @@ public class User {
     @JoinColumn(name = "position_id")
     private Position position;
 
+    @Column(name = "is_active")
+    private Boolean isActive;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    private UserStatus status;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @ManyToMany
     @JoinTable(
         name = "users_roles", schema = "private",
@@ -63,7 +99,5 @@ public class User {
     )
     private List<Role> roles;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id")
-    private UserStatus status;
+
 }

@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "parameters", schema = "private")
 @Data
@@ -20,17 +22,20 @@ public class Parameter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "category", nullable = false)
+    @Column(name = "parent_id", nullable = false)
     private String category;
-
-    @Column(name = "name", nullable = false)
-    private String name;
 
     @Column(name = "value")
     private String value;
 
-    @Column(name = "description")
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "label")
     private String description;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
 
 
