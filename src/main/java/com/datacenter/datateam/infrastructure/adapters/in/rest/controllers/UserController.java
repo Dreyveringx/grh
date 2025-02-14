@@ -1,25 +1,23 @@
 package com.datacenter.datateam.infrastructure.adapters.in.rest.controllers;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.datacenter.datateam.application.useCases.RegisterUserUseCase;
-import com.datacenter.datateam.domain.models.User;
 import com.datacenter.datateam.infrastructure.adapters.in.rest.controllers.requests.RegisterUserRequest;
-import com.datacenter.datateam.infrastructure.mappers.UserMapper;
+import com.datacenter.datateam.infrastructure.adapters.in.rest.controllers.responses.UserResponse;
 
 @RestController
 @RequestMapping("/users")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserController {
     private final RegisterUserUseCase registerUserUseCase;
-    private final UserMapper userMapper;
 
-    @PostMapping
-    public ResponseEntity<Void> registerUser(@RequestBody RegisterUserRequest request) {
-        User user = userMapper.toUser(request);
-        registerUserUseCase.execute(user);
-        return ResponseEntity.ok().build();
+    @PostMapping("/register")
+    public ResponseEntity<UserResponse> registerUser(@RequestBody RegisterUserRequest request) {
+        UserResponse response = registerUserUseCase.execute(request);
+        return ResponseEntity.ok(response);
     }
 }
