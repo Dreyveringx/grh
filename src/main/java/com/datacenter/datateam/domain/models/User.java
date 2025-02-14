@@ -23,9 +23,9 @@ public class User {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @ManyToOne
-    @JoinColumn(name = "document_type_id", nullable = false)
-    private DocumentType documentType;
+    // @ManyToOne
+    // @JoinColumn(name = "document_type_id", nullable = false)
+    // private DocumentType documentType;
 
     @Column(name = "document_number", nullable = false, unique = true)
     private String documentNumber;
