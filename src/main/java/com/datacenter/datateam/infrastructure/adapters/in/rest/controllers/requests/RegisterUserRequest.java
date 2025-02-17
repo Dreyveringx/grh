@@ -4,7 +4,6 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 import java.util.List;
 
-
 @Data
 public class RegisterUserRequest {
 
@@ -43,9 +42,11 @@ public class RegisterUserRequest {
     @Email(message = "El email no es válido")
     private String email;
 
-    private String secondaryEmail;
+    @Email(message = "El segundo email no es válido")
+    private String secondaryEmail; // Ahora se valida correctamente si se envía
 
     @NotBlank(message = "El teléfono es obligatorio")
+    @Pattern(regexp = "^[0-9+\\-() ]{7,15}$", message = "El teléfono no es válido")
     private String phone;
 
     private Integer companyId;

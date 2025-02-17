@@ -1,6 +1,8 @@
 package com.datacenter.datateam.application.useCases;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import java.util.List;
@@ -32,37 +34,18 @@ public class RegisterUserUseCase {
             throw new RuntimeException("El email ya está registrado.");
         }
 
-        // Obtener Tipo de Documento (Parameter)
-        Parameter documentType = parameterRepository.findById(request.getDocumentTypeId())
-                .orElseThrow(() -> new ResourceNotFoundException("Tipo de documento no encontrado."));
+        // Obtener entidades relacionadas
+        Parameter documentType = findEntityById(parameterRepository, request.getDocumentTypeId(), "Tipo de documento no encontrado.");
+        Parameter maritalStatus = findEntityById(parameterRepository, request.getMaritalStatusId(), "Estado civil no encontrado.");
+        City city = findEntityById(cityRepository, request.getDocumentIssueCityId(), "Ciudad de emisión no encontrada.");
+        Nationality nationality = findEntityById(nationalityRepository, request.getNationalityId(), "Nacionalidad no encontrada.");
+        UserStatus status = findEntityById(userStatusRepository, request.getStatusId(), "Estado de usuario no encontrado.");
 
-        // Obtener Estado Civil (Parameter)
-        Parameter maritalStatus = parameterRepository.findById(request.getMaritalStatusId())
-                .orElseThrow(() -> new ResourceNotFoundException("Estado civil no encontrado."));
-
-        // Obtener Ciudad de Emisión
-        City city = cityRepository.findById(request.getDocumentIssueCityId())
-                .orElseThrow(() -> new ResourceNotFoundException("Ciudad de emisión no encontrada."));
-
-        // Obtener Nacionalidad
-        Nationality nationality = nationalityRepository.findById(request.getNationalityId())
-                .orElseThrow(() -> new ResourceNotFoundException("Nacionalidad no encontrada."));
-
-        // Obtener Compañía (si se proporciona)
-        Company company = request.getCompanyId() != null
-                ? companyRepository.findById(request.getCompanyId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Compañía no encontrada."))
-                : null;
-
-        // Obtener Posición (si se proporciona)
-        Position position = request.getPositionId() != null
-                ? positionRepository.findById(request.getPositionId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Posición no encontrada."))
-                : null;
-
-        // Obtener Estado del Usuario
-        UserStatus status = userStatusRepository.findById(request.getStatusId())
-                .orElseThrow(() -> new ResourceNotFoundException("Estado de usuario no encontrado."));
+        // Obtener compañía y posición opcionalmente
+        Company company = request.getCompanyId() != null ? 
+            findEntityById(companyRepository, request.getCompanyId(), "Compañía no encontrada.") : null;
+        Position position = request.getPositionId() != null ? 
+            findEntityById(positionRepository, request.getPositionId(), "Posición no encontrada.") : null;
 
         // Obtener Roles
         List<Role> roles = roleRepository.findAllById(request.getRoleIds());
@@ -72,7 +55,7 @@ public class RegisterUserUseCase {
 
         // Mapear DTO a entidad User
         User user = userMapper.toUser(request);
-        user.setPassword(passwordEncoder.encode(request.getPassword())); // ENCRIPTAR CONTRASEÑA
+        user.setPassword(passwordEncoder.encode(request.getPassword())); // Encriptar contraseña
         user.setDocumentType(documentType);
         user.setDocumentIssueCity(city);
         user.setNationality(nationality);
@@ -85,5 +68,11 @@ public class RegisterUserUseCase {
         user = userRepository.save(user);
 
         return userMapper.toResponse(user);
+    }
+
+    // ✅ Método genérico para encontrar entidades y evitar código repetitivo
+    private <T, ID> T findEntityById(JpaRepository<T, ID> repository, ID id, String errorMessage) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(errorMessage));
     }
 }

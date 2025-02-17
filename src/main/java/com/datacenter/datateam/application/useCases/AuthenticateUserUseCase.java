@@ -24,11 +24,11 @@ public class AuthenticateUserUseCase implements AuthInputPort {
     @Override
     public LoginResponse execute(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+                new UsernamePasswordAuthenticationToken(request.getDocumentNumber(), request.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getDocumentNumber());
         String jwt = jwtUtil.generateToken(userDetails);
 
         return new LoginResponse(jwt);
