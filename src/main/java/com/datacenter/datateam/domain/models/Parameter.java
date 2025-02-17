@@ -3,14 +3,18 @@ package com.datacenter.datateam.domain.models;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "parameter", schema = "private")
@@ -22,13 +26,11 @@ public class Parameter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "parent_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "parent_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "parameter_parent_id_fkey"), nullable = false)
     private String category;
 
-    @Column(name = "value")
     private String value;
-
-    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "label")

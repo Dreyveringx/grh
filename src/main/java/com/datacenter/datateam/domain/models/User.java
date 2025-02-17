@@ -23,8 +23,11 @@ public class User {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @ManyToOne
     @JoinColumn(name = "document_type_id")
+    private Integer idDocumentType;
+
+    @ManyToOne
+    @JoinColumn(name = "document_type_id", insertable = false, updatable = false)
     private Parameter documentType;
 
 
