@@ -9,6 +9,7 @@ public interface ParameterOutputPort {
     Parameter save(Parameter parameter);
     Optional<Parameter> findById(Integer id);
     List<Parameter> findAll();
+    void someMethod();
     void deleteById(Integer id);
 }
 
