@@ -25,6 +25,13 @@ public abstract class UserMapper {
     @Mapping(source = "positionId", target = "position.id")
     @Mapping(source = "statusId", target = "status.id")
     @Mapping(target = "roles", expression = "java(mapRoles(request.getRoleIds()))") // Mapeo correcto de roles
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "isActive", ignore = true)
+    @Mapping(target = "email2", ignore = true)
+    @Mapping(target = "idDocumentType", ignore = true)
+
     public abstract User toUser(RegisterUserRequest request);
 
     @Mapping(source = "documentType.name", target = "documentType")

@@ -3,38 +3,40 @@ package com.datacenter.datateam.infrastructure.adapters.in.rest.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.datacenter.datateam.domain.models.Parameter;
+import com.datacenter.datateam.infrastructure.adapters.out.databases.ParameterRepository;
 import com.datacenter.datateam.infrastructure.ports.out.ParameterOutputPort;
 
 @Component
 public class ParameterOutputPortImpl implements ParameterOutputPort {
-    @Override
-    public void someMethod() {
+
+    private final ParameterRepository parameterRepository;
+
+    @Autowired
+    public ParameterOutputPortImpl(ParameterRepository parameterRepository) {
+        this.parameterRepository = parameterRepository;
     }
 
-    @Override
+    @Override 
     public Parameter save(Parameter parameter) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
+        return parameterRepository.save(parameter);  // Guardamos el objeto en la base de datos
     }
 
     @Override
     public Optional<Parameter> findById(Integer id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+        return parameterRepository.findById(id);  // Buscamos el objeto por ID
     }
 
     @Override
     public List<Parameter> findAll() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+        return parameterRepository.findAll();  // Obtenemos todos los parámetros
     }
 
     @Override
     public void deleteById(Integer id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+        parameterRepository.deleteById(id);  // Eliminamos el parámetro por ID
     }
 }
