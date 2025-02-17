@@ -41,7 +41,7 @@ public class RegisterUserUseCase {
         Nationality nationality = findEntityById(nationalityRepository, request.getNationalityId(), "Nacionalidad no encontrada.");
         UserStatus status = findEntityById(userStatusRepository, request.getStatusId(), "Estado de usuario no encontrado.");
 
-        // Obtener compañía y posición opcionalmente
+        // Obtener compañía y posición solo si están presentes en la solicitud
         Company company = request.getCompanyId() != null ? 
             findEntityById(companyRepository, request.getCompanyId(), "Compañía no encontrada.") : null;
         Position position = request.getPositionId() != null ? 
@@ -65,6 +65,7 @@ public class RegisterUserUseCase {
         user.setStatus(status);
         user.setRoles(roles);
 
+        // Guardar usuario en la base de datos
         user = userRepository.save(user);
 
         return userMapper.toResponse(user);
