@@ -21,6 +21,3 @@ public class UserResponse {
     private String status;
     private List<String> roles;
 }
-
-
-

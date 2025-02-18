@@ -2,40 +2,48 @@ package com.datacenter.datateam.infrastructure.adapters.in.rest.controllers.requ
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
 public class RegisterUserRequest {
 
     @NotBlank(message = "El número de documento es obligatorio")
-    private String documentNumber;  // Obligatorio
+    private String documentNumber;
 
     @NotNull(message = "El tipo de documento es obligatorio")
-    private Integer documentTypeId;  // Obligatorio
+    private Integer documentTypeId;
 
     @NotBlank(message = "El email es obligatorio")
     @Email(message = "El email no es válido")
-    private String email;  // Obligatorio
+    private String email;
 
     @NotBlank(message = "La contraseña es obligatoria")
     @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
-    private String password;  // Obligatorio
+    private String password;
 
-    // Los demás campos no son obligatorios
+    private String firstName;
+    private String lastName;
 
-    private String firstName;  // No obligatorio
-    private String lastName;  // No obligatorio
-    private String birthDate;  // No obligatorio
-    private String documentIssueDate;  // No obligatorio
-    private Integer documentIssueCityId;  // No obligatorio
-    private Integer nationalityId;  // No obligatorio
-    private Integer maritalStatusId;  // No obligatorio
-    private boolean hasHouse;  // No obligatorio
-    private boolean hasChildren;  // No obligatorio
-    private String secondaryEmail;  // No obligatorio
-    private String phone;  // No obligatorio
-    private Integer companyId;  // No obligatorio
-    private Integer positionId;  // No obligatorio
-    private Integer statusId;  // No obligatorio
-    private List<Integer> roleIds;  // No obligatorio
+    @Past(message = "La fecha de nacimiento debe ser en el pasado")
+    private LocalDate birthDate;  // Usando LocalDate
+
+    @Past(message = "La fecha de emisión del documento debe ser en el pasado")
+    private LocalDate documentIssueDate;  // Usando LocalDate
+
+    private Integer documentIssueCityId;
+    private Integer nationalityId;
+    private Integer maritalStatusId;
+
+    private Boolean hasHouse;  // Usando Boolean en lugar de boolean
+    private Boolean hasChildren;  // Usando Boolean en lugar de boolean
+
+    private String secondaryEmail;
+    private String phone;
+    private Integer companyId;
+    private Integer positionId;
+    private Integer statusId;
+
+    @NotEmpty(message = "Debe tener al menos un rol asignado")
+    private List<Integer> roleIds;  // Validación de roles
 }
