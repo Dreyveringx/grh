@@ -3,7 +3,6 @@ package com.datacenter.datateam.infrastructure.adapters.in.rest.controllers;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.datacenter.datateam.domain.models.Parameter;
@@ -15,7 +14,6 @@ public class ParameterOutputPortImpl implements ParameterOutputPort {
 
     private final ParameterRepository parameterRepository;
 
-    @Autowired
     public ParameterOutputPortImpl(ParameterRepository parameterRepository) {
         this.parameterRepository = parameterRepository;
     }

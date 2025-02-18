@@ -1,17 +1,20 @@
 package com.datacenter.datateam.application.useCases;
 
-import lombok.AllArgsConstructor;
+import com.datacenter.datateam.infrastructure.adapters.in.rest.controllers.requests.CreateRoleRequest;
+import com.datacenter.datateam.infrastructure.ports.out.RoleOutputPort;
+import com.datacenter.datateam.domain.models.Role;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import com.datacenter.datateam.domain.models.Role;
-import com.datacenter.datateam.domain.services.RoleService;
-
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CreateRoleUseCase {
-    private final RoleService roleService;
+    private final RoleOutputPort roleOutputPort;
 
-    public void execute(Role role) {
-        roleService.createRole(role);
+    public void execute(CreateRoleRequest request) {
+        Role role = new Role();
+        role.setName(request.getName());
+        role.setDescription(request.getDescription());
+        roleOutputPort.save(role); // Guardar en la base de datos
     }
 }

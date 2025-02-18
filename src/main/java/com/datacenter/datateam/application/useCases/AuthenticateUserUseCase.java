@@ -21,35 +21,27 @@ import java.util.stream.Collectors;
 public class AuthenticateUserUseCase implements AuthInputPort {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService; // Eliminamos userOutputPort si no se usa
 
     @Override
     public LoginResponse execute(LoginRequest request) {
-        // Autenticación del usuario
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getDocumentNumber(), request.getPassword()));
         } catch (Exception e) {
-            // Manejo de error en caso de fallo de autenticación
             throw new RuntimeException("Invalid credentials");
         }
 
-        // Establecer el contexto de seguridad con la autenticación
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // Cargar detalles del usuario autenticado
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getDocumentNumber());
 
-        // Obtener roles del usuario
         List<String> roles = userDetails.getAuthorities().stream()
-            .map(authority -> authority.getAuthority().replace("ROLE_", "")) // Quitar el prefijo ROLE_
+            .map(authority -> authority.getAuthority().replace("ROLE_", ""))
             .collect(Collectors.toList());
 
-        // Generar el token JWT
         String jwt = jwtUtil.generateToken(userDetails);
 
-        // Retornar respuesta con JWT y roles
         return new LoginResponse(jwt, roles);
     }
 }
