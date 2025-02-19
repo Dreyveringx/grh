@@ -27,4 +27,3 @@ public class RegisterUserController {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 }
-

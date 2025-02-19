@@ -36,15 +36,15 @@ class RegisterUserUseCaseTest {
     void testRegisterUserSuccess() {
         // Arrange
         RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("test@example.com");
+        request.setDocumentNumber("1193227508");
         request.setPassword("123456");
 
         User user = new User();
-        user.setEmail(request.getEmail());
+        user.setEmail(request.getDocumentNumber());
 
         UserResponse userResponse = new UserResponse(1L, "First", "Last", "test@example.com", "123456789", "ID", "Country", "Single", "Company", "Developer", "Active", null);
 
-        when(userOutputPort.findByEmail(request.getEmail())).thenReturn(Optional.empty());
+        when(userOutputPort.findByEmail(request.getDocumentNumber())).thenReturn(Optional.empty());
         when(userMapper.toUser(request)).thenReturn(user);
         when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
         when(userOutputPort.save(user)).thenReturn(user);
@@ -63,15 +63,15 @@ class RegisterUserUseCaseTest {
     void testRegisterUserEmailAlreadyExists() {
         // Arrange
         RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("test@example.com");
+        request.setDocumentNumber("");
 
-        when(userOutputPort.findByEmail(request.getEmail())).thenReturn(Optional.of(new User()));
+        when(userOutputPort.findByEmail(request.getDocumentNumber())).thenReturn(Optional.of(new User()));
 
         // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             registerUserUseCase.execute(request);
         });
 
-        assertEquals("El email ya está registrado.", exception.getMessage());
+        assertEquals("El número de documento ya está registrado.", exception.getMessage());
     }
 }

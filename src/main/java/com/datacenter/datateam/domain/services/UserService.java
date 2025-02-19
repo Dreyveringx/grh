@@ -1,14 +1,14 @@
 package com.datacenter.datateam.domain.services;
 
-import java.util.List;
+import java.util.Collections;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.datacenter.datateam.domain.models.Parameter;
-import com.datacenter.datateam.domain.models.Role;
+
 import com.datacenter.datateam.domain.models.User;
+import com.datacenter.datateam.domain.models.Role;
 import com.datacenter.datateam.infrastructure.adapters.in.rest.controllers.requests.RegisterUserRequest;
 import com.datacenter.datateam.infrastructure.adapters.in.rest.controllers.responses.UserResponse;
-import com.datacenter.datateam.infrastructure.adapters.out.databases.ParameterRepository;
 import com.datacenter.datateam.infrastructure.adapters.out.databases.RoleRepository;
 import com.datacenter.datateam.infrastructure.adapters.out.databases.UserRepository;
 import com.datacenter.datateam.infrastructure.mappers.UserMapper;
@@ -18,23 +18,34 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    
     private final UserRepository userRepository;
-    private final ParameterRepository parameterRepository;
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public UserResponse registerUser(RegisterUserRequest request) {
-        Parameter documentType = parameterRepository.findById(request.getDocumentTypeId())
-                .orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
-
-        List<Role> roles = roleRepository.findAllById(request.getRoleIds());
-        if (roles.isEmpty()) {
-            throw new RuntimeException("Roles no encontrados");
+        // Verificar si el usuario ya existe
+        if (userRepository.findByDocumentNumber(request.getDocumentNumber()).isPresent()) {
+            throw new RuntimeException("El usuario con este número de documento ya está registrado.");
         }
 
-        User user = userMapper.toUser(request);
-        user.setDocumentType(documentType);
-        user.setRoles(roles);
+        // Asignar rol por defecto (siempre se asigna uno)
+        Role defaultRole = roleRepository.findById(1)
+            .orElseThrow(() -> new RuntimeException("Rol por defecto no encontrado"));
+
+        // Crear usuario con valores mínimos requeridos
+        User user = new User();
+        user.setDocumentNumber(request.getDocumentNumber());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRoles(Collections.singletonList(defaultRole));
+
+        // Opcionalmente, agregar valores por defecto en otros campos
+        user.setEmail(request.getDocumentNumber() + "@default.com");
+        user.setFirstName("Usuario");
+        user.setLastName("No definido");
+
+        // Guardar usuario
         user = userRepository.save(user);
 
         return userMapper.toResponse(user);
