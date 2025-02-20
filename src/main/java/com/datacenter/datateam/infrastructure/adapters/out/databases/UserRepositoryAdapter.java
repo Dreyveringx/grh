@@ -18,11 +18,6 @@ public class UserRepositoryAdapter implements UserOutputPort {
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    @Override
     public Optional<User> findByDocumentNumber(String documentNumber) {
         return userRepository.findByDocumentNumber(documentNumber);
     }
