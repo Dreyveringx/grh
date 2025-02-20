@@ -33,7 +33,6 @@ public class AuthenticateUserUseCase implements AuthInputPort {
         // Buscar usuario en la base de datos
         User user = userRepository.findByDocumentNumber(request.getDocumentNumber())
                 .orElseThrow(() -> {
-                    System.out.println("❌ Usuario no encontrado.");
                     return new BadCredentialsException("Usuario o contraseña incorrectos.");
                 });
 
@@ -41,7 +40,6 @@ public class AuthenticateUserUseCase implements AuthInputPort {
 
         // Verificar si la contraseña coincide
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            System.out.println("❌ La contraseña ingresada no coincide.");
             throw new BadCredentialsException("Usuario o contraseña incorrectos.");
         }
 
@@ -59,10 +57,8 @@ public class AuthenticateUserUseCase implements AuthInputPort {
 
             return new LoginResponse(jwt);
         } catch (BadCredentialsException e) {
-            System.out.println("❌ Error de autenticación: Credenciales incorrectas.");
             throw new BadCredentialsException("Usuario o contraseña incorrectos.");
         } catch (Exception e) {
-            System.out.println("❌ Error inesperado en la autenticación: " + e.getMessage());
             throw new RuntimeException("Error en el servidor al procesar la autenticación.");
         }
         

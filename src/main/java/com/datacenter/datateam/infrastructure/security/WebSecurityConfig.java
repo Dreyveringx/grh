@@ -23,12 +23,10 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // 🔥 Desactivar CSRF para permitir peticiones POST
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/register", "/api/auth/login").permitAll() // ✅ Permitir registro y
-                                                                                               // login sin
-                                                                                               // autenticación
-                        .anyRequest().authenticated() // 🔐 Proteger otros endpoints
+                        .requestMatchers("/api/users/register", "/api/auth/login").permitAll()       
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
