@@ -30,22 +30,22 @@ public class UserService {
             throw new RuntimeException("El usuario con este número de documento ya está registrado.");
         }
 
+        // Verificar si el correo ya existe
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("El usuario con este correo ya está registrado.");
+        }
+
         // Asignar rol por defecto (siempre se asigna uno)
         Role defaultRole = roleRepository.findById(1)
             .orElseThrow(() -> new RuntimeException("Rol por defecto no encontrado"));
 
         // Crear usuario con valores mínimos requeridos
-        User user = new User();1
+        User user = new User();
         user.setEmail(request.getEmail());
         user.setDocumentNumber(request.getDocumentNumber());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRoles(Collections.singletonList(defaultRole));
 
-        // Opcionalmente, agregar valores por defecto en otros campos
-        user.setFirstName("Usuario");
-        user.setLastName("No definido");
-
-        // Guardar usuario
         user = userRepository.save(user);
 
         return userMapper.toResponse(user);
