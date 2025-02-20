@@ -30,14 +30,16 @@ public class User {
     @JoinColumn(name = "document_type_id", insertable = false, updatable = false)
     private Parameter documentType;
 
-
     @Column(name = "document_number", nullable = false, unique = true)
     private String documentNumber;
 
-    //Crear entidad Attachments
-    /*@ManyToOne
-    @JoinColumn(name = "document_file_id", nullable = false)
-    private Attachments documentFile;*/
+    // Crear entidad Attachments
+    /*
+     * @ManyToOne
+     * 
+     * @JoinColumn(name = "document_file_id", nullable = false)
+     * private Attachments documentFile;
+     */
 
     @Column(name = "birth_date")
     private LocalDate birthDate;
@@ -57,7 +59,7 @@ public class User {
     @JoinColumn(name = "marital_status_id", nullable = false)
     private Parameter maritalStatus;
 
-    @Column(name= "has_house")
+    @Column(name = "has_house")
     private Boolean hasHouse;
 
     @Column(name = "has_children")
@@ -96,12 +98,10 @@ public class User {
     private String password;
 
     @ManyToMany
-    @JoinTable(
-        name = "users_roles", schema = "private",
-        joinColumns = @JoinColumn(name = "users_id"),
-        inverseJoinColumns = @JoinColumn(name = "roles_id")
-    )
+    @JoinTable(name = "users_roles", schema = "private", joinColumns = @JoinColumn(name = "users_id"), inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private List<Role> roles;
 
+    @Column(name = "reset_token", unique = true)
+    private String resetToken;
 
 }
