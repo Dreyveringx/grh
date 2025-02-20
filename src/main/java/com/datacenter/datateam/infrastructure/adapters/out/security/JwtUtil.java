@@ -3,11 +3,11 @@ package com.datacenter.datateam.infrastructure.adapters.out.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,13 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
-    private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    @Value("${jwt.secret}")
+    private String secretKey;
+
+    @Value("${jwt.expiration}")
+    private long expirationTime;
+
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -30,8 +36,13 @@ public class JwtUtil {
         return claimsResolver.apply(claims);
     }
 
+    @SuppressWarnings("deprecation")
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private Boolean isTokenExpired(String token) {
@@ -43,18 +54,27 @@ public class JwtUtil {
         return createToken(claims, userDetails.getUsername());
     }
 
+    @SuppressWarnings("deprecation")
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 horas
-                .signWith(SECRET_KEY)
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // Usa la configuración
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        boolean isValid = (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+
+        if (!isValid) {
+            System.out.println("⚠️ Token inválido para el usuario: " + username);
+        } else {
+            System.out.println("✅ Token válido para el usuario: " + username);
+        }
+
+        return isValid;
     }
 }
