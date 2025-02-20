@@ -3,7 +3,6 @@ package com.datacenter.datateam.domain.models;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -103,5 +102,10 @@ public class User {
     )
     private List<Role> roles;
 
+    // ✅ Estos campos NO se guardarán en la BD
+    @Transient
+    private String resetToken;
 
+    @Transient
+    private String activationToken;
 }
