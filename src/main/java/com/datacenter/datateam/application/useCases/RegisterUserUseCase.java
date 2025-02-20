@@ -38,8 +38,6 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
         user.setEmail(request.getEmail());
         user.setDocumentNumber(request.getDocumentNumber());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setFirstName("Usuario");
-        user.setLastName("No definido");
 
         // Guardar usuario en la base de datos
         user = userOutputPort.save(user);
