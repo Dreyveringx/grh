@@ -63,7 +63,7 @@ public class User {
     @Column(name = "has_children")
     private Boolean hasChildren;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(name = "email_2", unique = true)

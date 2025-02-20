@@ -23,6 +23,8 @@ public abstract class UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "isActive", ignore = true)
+    @Mapping(source = "email", target = "email")
     @Mapping(target = "firstName", constant = "Usuario")
     @Mapping(target = "lastName", constant = "No definido")
     @Mapping(target = "roles", ignore = true) // Se asignará después

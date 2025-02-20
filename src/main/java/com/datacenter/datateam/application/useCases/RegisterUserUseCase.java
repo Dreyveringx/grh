@@ -24,20 +24,26 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
 
     @Override
     public UserResponse execute(RegisterUserRequest request) {
-        // Validar si el usuario ya existe
-        if (userOutputPort.findByDocumentNumber(request.getDocumentNumber()).isPresent()) {
-            throw new UserAlreadyExistsException("El usuario con este número de documento ya está registrado.");
-        }
 
-        // Validar si el correo ya existe
-        if (userOutputPort.findByEmail(request.getEmail()).isPresent()) {
-            throw new UserAlreadyExistsException("El usuario con este correo ya está registrado.");
-        }
-    
         // Crear usuario con valores por defecto
         User user = new User();
+        user.setEmail(request.getEmail());
         user.setDocumentNumber(request.getDocumentNumber());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        // Validar si el usuario ya existe
+        try {
+            if (userOutputPort.findByDocumentNumber(request.getDocumentNumber()).isPresent()) {
+                throw new UserAlreadyExistsException("El usuario con este número de documento ya está registrado.");
+            }
+        
+            if (userOutputPort.findByEmail(request.getEmail()).isPresent()) {
+                throw new UserAlreadyExistsException("El usuario con este correo ya está registrado.");
+            }
+        } catch (UserAlreadyExistsException e) {
+            System.err.println(e.getMessage());
+            throw e;
+        }
     
         // Valores por defecto
         user.setFirstName("Usuario");

@@ -7,6 +7,7 @@ import lombok.Data;
 public class RegisterUserRequest {
 
     @NotBlank(message = "El número de documento es obligatorio")
+    @Size(min = 8, max = 10, message = "El número de documento debe tener entre 8 y 10 caracteres")
     private String documentNumber;
 
     @NotBlank(message = "La contraseña es obligatoria")
@@ -15,5 +16,6 @@ public class RegisterUserRequest {
 
     @NotBlank(message = "El correo es obligatorio")
     private String email;
+    
 
 }

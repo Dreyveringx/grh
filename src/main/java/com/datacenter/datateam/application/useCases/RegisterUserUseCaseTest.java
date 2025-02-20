@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,19 +34,15 @@ class RegisterUserUseCaseTest {
     void testRegisterUserSuccess() {
         // Arrange
         RegisterUserRequest request = new RegisterUserRequest();
-        request.setDocumentNumber("1193227508");
-        request.setPassword("123456");
+        request.setEmail("");
+        request.setDocumentNumber("");
+        request.setPassword("");
 
         User user = new User();
-        user.setEmail(request.getDocumentNumber());
-
-        UserResponse userResponse = new UserResponse(1L, "First", "Last", "test@example.com", "123456789", "ID", "Country", "Single", "Company", "Developer", "Active", null);
-
-        
         when(userMapper.toUser(request)).thenReturn(user);
         when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
         when(userOutputPort.save(user)).thenReturn(user);
-        when(userMapper.toResponse(user)).thenReturn(userResponse);
+ 
 
         // Act
         UserResponse response = registerUserUseCase.execute(request);
@@ -63,8 +58,6 @@ class RegisterUserUseCaseTest {
         // Arrange
         RegisterUserRequest request = new RegisterUserRequest();
         request.setDocumentNumber("");
-
-        
 
         // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
