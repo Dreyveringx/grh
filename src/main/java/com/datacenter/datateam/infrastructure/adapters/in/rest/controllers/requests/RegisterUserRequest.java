@@ -13,4 +13,7 @@ public class RegisterUserRequest {
     @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     private String password;
 
+    @NotBlank(message = "El correo es obligatorio")
+    private String email;
+
 }

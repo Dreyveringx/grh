@@ -28,6 +28,11 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
         if (userOutputPort.findByDocumentNumber(request.getDocumentNumber()).isPresent()) {
             throw new UserAlreadyExistsException("El usuario con este número de documento ya está registrado.");
         }
+
+        // Validar si el correo ya existe
+        if (userOutputPort.findByEmail(request.getEmail()).isPresent()) {
+            throw new UserAlreadyExistsException("El usuario con este correo ya está registrado.");
+        }
     
         // Crear usuario con valores por defecto
         User user = new User();
@@ -35,7 +40,6 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
     
         // Valores por defecto
-        user.setEmail(request.getDocumentNumber() + "@default.com");
         user.setFirstName("Usuario");
         user.setLastName("No definido");
     

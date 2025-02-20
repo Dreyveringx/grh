@@ -35,13 +35,13 @@ public class UserService {
             .orElseThrow(() -> new RuntimeException("Rol por defecto no encontrado"));
 
         // Crear usuario con valores mínimos requeridos
-        User user = new User();
+        User user = new User();1
+        user.setEmail(request.getEmail());
         user.setDocumentNumber(request.getDocumentNumber());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRoles(Collections.singletonList(defaultRole));
 
         // Opcionalmente, agregar valores por defecto en otros campos
-        user.setEmail(request.getDocumentNumber() + "@default.com");
         user.setFirstName("Usuario");
         user.setLastName("No definido");
 
