@@ -15,7 +15,7 @@ public class RegisterUserRequest {
     private String password;
 
     @NotBlank(message = "El correo es obligatorio")
+    @Email(message = "El formato del correo es inválido")
     private String email;
     
-
 }
