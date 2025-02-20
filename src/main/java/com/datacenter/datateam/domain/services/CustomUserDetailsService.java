@@ -1,4 +1,4 @@
-package com.datacenter.datateam.infrastructure.security;
+package com.datacenter.datateam.domain.services;
 
 import com.datacenter.datateam.domain.models.User;
 import com.datacenter.datateam.infrastructure.adapters.out.databases.UserRepository;
