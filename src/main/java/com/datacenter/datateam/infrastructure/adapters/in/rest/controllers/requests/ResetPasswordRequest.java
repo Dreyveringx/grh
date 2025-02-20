@@ -1,8 +1,10 @@
 package com.datacenter.datateam.infrastructure.adapters.in.rest.controllers.requests;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class ResetPasswordRequest {
     private String token;
     private String newPassword;

@@ -1,13 +1,13 @@
 package com.datacenter.datateam.infrastructure.adapters.out.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,12 +16,14 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
-    private String secretKey;
+    private final SecretKey SECRET_KEY;
+    private final long expirationTime;
 
-    @Value("${jwt.expiration}")
-    private long expirationTime;
-
+    public JwtUtil(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration}") long expirationTime) {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        this.SECRET_KEY = Keys.hmacShaKeyFor(keyBytes);
+        this.expirationTime = expirationTime;
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -36,10 +38,9 @@ public class JwtUtil {
         return claimsResolver.apply(claims);
     }
 
-    @SuppressWarnings("deprecation")
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
+                .setSigningKey(SECRET_KEY)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -50,31 +51,29 @@ public class JwtUtil {
     }
 
     public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+        return createToken(new HashMap<>(), userDetails.getUsername());
     }
 
-    @SuppressWarnings("deprecation")
+    public String generateRecoveryToken(String email) {
+        return createToken(new HashMap<>(), email, 15 * 60 * 1000); // 15 minutos
+    }
+
     private String createToken(Map<String, Object> claims, String subject) {
+        return createToken(claims, subject, expirationTime);
+    }
+
+    private String createToken(Map<String, Object> claims, String subject, long customExpiration) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // Usa la configuración
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(System.currentTimeMillis() + customExpiration))
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        boolean isValid = (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-
-        if (!isValid) {
-            System.out.println("⚠️ Token inválido para el usuario: " + username);
-        } else {
-            System.out.println("✅ Token válido para el usuario: " + username);
-        }
-
-        return isValid;
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 }
