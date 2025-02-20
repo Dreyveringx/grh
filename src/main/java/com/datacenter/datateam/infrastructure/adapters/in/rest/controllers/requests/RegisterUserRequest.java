@@ -6,6 +6,12 @@ import lombok.Data;
 @Data
 public class RegisterUserRequest {
 
+    @NotBlank(message = "El nombre es obligatorio")
+    private String firstName;
+
+    @NotBlank(message = "El apellido es obligatorio")
+    private String lastName;
+
     @NotBlank(message = "El número de documento es obligatorio")
     @Size(min = 8, max = 10, message = "El número de documento debe tener entre 8 y 10 caracteres")
     private String documentNumber;
