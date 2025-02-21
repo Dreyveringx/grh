@@ -41,9 +41,10 @@ public class PasswordRecoveryController {
         // Generar un token de recuperación (válido por 15 min)
         String token = jwtUtil.generateRecoveryToken(user.getEmail());
 
-        // Enviar email con el enlace de recuperación
-        String resetLink = "http://localhost:8085/api/auth/reset-password?token=" + token;
-        emailService.sendEmail(user.getEmail(), "Recuperación de contraseña", "Haz clic en el enlace para restablecer tu contraseña: " + resetLink);
+    // Enviar email con el enlace de recuperación apuntando al frontend de Angular
+    String resetLink = "http://localhost:4200/restablecer?token=" + token;
+    emailService.sendEmail(user.getEmail(), "Recuperación de contraseña",
+            "Haz clic en el siguiente enlace para restablecer tu contraseña: " + resetLink);
 
         return ResponseEntity.ok("📩 Se ha enviado un correo con instrucciones.");
     }
