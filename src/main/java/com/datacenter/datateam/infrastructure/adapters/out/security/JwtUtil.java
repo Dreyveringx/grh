@@ -23,6 +23,9 @@ public class JwtUtil {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.SECRET_KEY = Keys.hmacShaKeyFor(keyBytes);
         this.expirationTime = expirationTime;
+
+        // ✅ Imprimir la clave secreta al iniciar el servidor
+        System.out.println("🔑 Clave secreta JWT: " + secret);
     }
 
     public String extractUsername(String token) {
