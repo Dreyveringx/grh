@@ -25,7 +25,7 @@ public class WebSecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // 🔥 Desactivar CSRF para permitir peticiones POST
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/users/register", "/api/auth/login","/api/password/update","/auth/forgot-password").permitAll() // ✅ Permitir registro y login sin autenticación
+                .requestMatchers("/api/users/register", "/api/auth/login","/api/password/update","/auth/forgot-password","/auth/reset-password").permitAll() // ✅ Permitir registro y login sin autenticación
                 .anyRequest().authenticated() // 🔐 Proteger otros endpoints
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
