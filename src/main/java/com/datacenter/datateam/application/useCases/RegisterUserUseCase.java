@@ -57,5 +57,4 @@ public UserResponse execute(RegisterUserRequest request) {
 
     return userMapper.toResponse(user);
 }
-
 }
