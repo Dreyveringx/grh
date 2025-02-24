@@ -23,49 +23,39 @@ public class RegisterUserUseCase implements RegisterUserInputPort {
     private final EmailService emailService;
 
     @Override
-    public UserResponse execute(RegisterUserRequest request) {
-        // Validar si el usuario ya existe
-        if (userOutputPort.findByDocumentNumber(request.getDocumentNumber()).isPresent()) {
-            throw new UserAlreadyExistsException("El usuario con este número de documento ya está registrado.");
-        }
 
-        if (userOutputPort.findByEmail(request.getEmail()).isPresent()) {
-            throw new UserAlreadyExistsException("El usuario con este correo ya está registrado.");
-        }
-
-        // Generar una contraseña segura aleatoria (si no la proporciona)
-        String generatedPassword = UUID.randomUUID().toString().substring(0, 8); // 8 caracteres
-        String encodedPassword = passwordEncoder.encode(generatedPassword);
-
-        // Crear usuario con estado INACTIVO
-        User user = new User();
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setEmail(request.getEmail());
-        user.setDocumentNumber(request.getDocumentNumber());
-        user.setPassword(encodedPassword);
-        user.setIsActive(true); // Asegúrate de que exista el setter en User
- // Desactivado hasta activación
-
-        // Guardar usuario en la base de datos
-        user = userOutputPort.save(user);
-
-        // Generar token de activación
-        String activationToken = UUID.randomUUID().toString();
-        user.setActivationToken(activationToken);
-        userOutputPort.save(user);
-
-        // Enviar correo con el enlace de activación
-        String activationLink = "http://localhost:8085/auth/activate?token=" + activationToken;
-        String subject = "Activa tu cuenta en nuestra plataforma";
-        String body = String.format(
-            "Hola %s,\n\nTu registro fue exitoso. Para activar tu cuenta, haz clic en el siguiente enlace:\n\n%s\n\n"
-            + "Tu contraseña temporal es: %s (cámbiala después de iniciar sesión).\n\nSaludos.",
-            user.getFirstName(), activationLink, generatedPassword
-        );
-
-        emailService.sendEmail(user.getEmail(), subject, body);
-
-        return userMapper.toResponse(user);
+public UserResponse execute(RegisterUserRequest request) {
+    // Validar si el usuario ya existe
+    if (userOutputPort.findByDocumentNumber(request.getDocumentNumber()).isPresent()) {
+        throw new UserAlreadyExistsException("El usuario con este número de documento ya está registrado.");
     }
+
+    if (userOutputPort.findByEmail(request.getEmail()).isPresent()) {
+        throw new UserAlreadyExistsException("El usuario con este correo ya está registrado.");
+    }
+
+    // Generar una contraseña segura aleatoria (si no la proporciona)
+    String rawPassword = request.getPassword() != null ? request.getPassword() : UUID.randomUUID().toString().substring(0, 8);
+    String encodedPassword = passwordEncoder.encode(rawPassword); // ⚠️ Asegurar encriptación aquí
+
+    // Crear usuario con estado INACTIVO
+    User user = new User();
+    user.setFirstName(request.getFirstName());
+    user.setLastName(request.getLastName());
+    user.setEmail(request.getEmail());
+    user.setDocumentNumber(request.getDocumentNumber());
+    user.setPassword(encodedPassword); // ⚠️ Almacenar la contraseña encriptada
+    user.setIsActive(true);
+
+    // Guardar usuario en la base de datos
+    user = userOutputPort.save(user);
+
+    // Enviar correo con la contraseña sin encriptar (para que el usuario la vea)
+    String subject = "Bienvenido a la plataforma";
+    String body = String.format("Hola %s,\n\nTu registro fue exitoso.\n\nTu contraseña temporal es: %s\n\nSaludos.", user.getFirstName(), rawPassword);
+    emailService.sendEmail(user.getEmail(), subject, body);
+
+    return userMapper.toResponse(user);
+}
+
 }

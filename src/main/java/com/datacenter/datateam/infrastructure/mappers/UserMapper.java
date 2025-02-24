@@ -42,6 +42,8 @@ public abstract class UserMapper {
     @Mapping(target = "phone", ignore = true)
     @Mapping(target = "position", ignore = true)
     @Mapping(target = "status", ignore = true)
+    @Mapping(target = "activationToken", ignore = true) 
+    @Mapping(target = "resetToken", ignore = true) 
     public abstract User toUser(RegisterUserRequest request);
 
     public abstract UserResponse toResponse(User user);
