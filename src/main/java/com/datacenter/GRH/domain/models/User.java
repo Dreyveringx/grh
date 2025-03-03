@@ -2,7 +2,8 @@ package com.datacenter.GRH.domain.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,21 +23,20 @@ public class User {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @JoinColumn(name = "document_type_id")
-    private Integer idDocumentType;
-
     @ManyToOne
-    @JoinColumn(name = "document_type_id", insertable = false, updatable = false)
+    @JoinColumn(name = "document_type_id", nullable = false)
     private Parameter documentType;
-
 
     @Column(name = "document_number", nullable = false, unique = true)
     private String documentNumber;
 
-    //Crear entidad Attachments
-    /*@ManyToOne
-    @JoinColumn(name = "document_file_id", nullable = false)
-    private Attachments documentFile;*/
+    // Crear entidad Attachments
+    /*
+     * @ManyToOne
+     * 
+     * @JoinColumn(name = "document_file_id", nullable = false)
+     * private Attachments documentFile;
+     */
 
     @Column(name = "birth_date")
     private LocalDate birthDate;
@@ -56,7 +56,7 @@ public class User {
     @JoinColumn(name = "marital_status_id", nullable = false)
     private Parameter maritalStatus;
 
-    @Column(name= "has_house")
+    @Column(name = "has_house")
     private Boolean hasHouse;
 
     @Column(name = "has_children")
@@ -82,10 +82,10 @@ public class User {
     private Boolean isActive;
 
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "status_id")
@@ -94,18 +94,27 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @ManyToMany
-    @JoinTable(
-        name = "users_roles", schema = "private",
-        joinColumns = @JoinColumn(name = "users_id"),
-        inverseJoinColumns = @JoinColumn(name = "roles_id")
-    )
-    private List<Role> roles;
+    @ManyToMany(fetch = FetchType.EAGER) // 🔥 Evita LazyInitializationException
+    @JoinTable(name = "users_roles", schema = "private", joinColumns = @JoinColumn(name = "users_id"), inverseJoinColumns = @JoinColumn(name = "roles_id"))
+    private Set<Role> roles;
 
-    // ✅ Estos campos NO se guardarán en la BD
+    // ✅ Campos transitorios (NO se guardan en la BD)
     @Transient
     private String resetToken;
 
     @Transient
     private String activationToken;
+
+    // ✅ Generar timestamps automáticamente
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
 }

@@ -2,31 +2,24 @@ package com.datacenter.GRH.infrastructure.mappers;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-
-import com.datacenter.GRH.domain.models.Company;
-import com.datacenter.GRH.domain.models.Nationality;
-import com.datacenter.GRH.domain.models.Parameter;
-import com.datacenter.GRH.domain.models.Position;
-import com.datacenter.GRH.domain.models.Role;
-import com.datacenter.GRH.domain.models.User;
-import com.datacenter.GRH.domain.models.UserStatus;
+import org.mapstruct.*;
+import com.datacenter.GRH.domain.models.*;
 import com.datacenter.GRH.infrastructure.adapters.in.rest.controllers.requests.RegisterUserRequest;
 import com.datacenter.GRH.infrastructure.adapters.in.rest.controllers.responses.UserResponse;
 
 @Mapper(componentModel = "spring")
 public abstract class UserMapper {
 
+    // 📌 Convertir `RegisterUserRequest` a `User`
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "isActive", ignore = true)
-    @Mapping(source = "email", target = "email")
-    @Mapping(target = "firstName", constant = "Usuario")
-    @Mapping(target = "lastName", constant = "No definido")
-    @Mapping(target = "roles", ignore = true) // Se asignará después
+    @Mapping(target = "firstName", source = "firstName") // 🔥 Se asigna desde el request
+    @Mapping(target = "lastName", source = "lastName")   // 🔥 Se asigna desde el request
+    @Mapping(target = "email", source = "email")
+    @Mapping(target = "documentNumber", source = "documentNumber")
+    @Mapping(target = "password", source = "password")
+    @Mapping(target = "roles", ignore = true)  // Se asignará después manualmente
     @Mapping(target = "birthDate", ignore = true)
     @Mapping(target = "company", ignore = true)
     @Mapping(target = "documentIssueCity", ignore = true)
@@ -35,20 +28,23 @@ public abstract class UserMapper {
     @Mapping(target = "email2", ignore = true)
     @Mapping(target = "hasChildren", ignore = true)
     @Mapping(target = "hasHouse", ignore = true)
-    @Mapping(target = "idDocumentType", ignore = true)
     @Mapping(target = "maritalStatus", ignore = true)
     @Mapping(target = "nationality", ignore = true)
     @Mapping(target = "phone", ignore = true)
     @Mapping(target = "position", ignore = true)
     @Mapping(target = "status", ignore = true)
-    @Mapping(target = "activationToken", ignore = true) 
+    @Mapping(target = "activationToken", ignore = true)
+    @Mapping(target = "isActive", ignore = true)
     @Mapping(target = "resetToken", ignore = true) 
     public abstract User toUser(RegisterUserRequest request);
 
+    // 📌 Convertir `User` a `UserResponse`
+    @Mapping(target = "roles", expression = "java(mapRoleNames(user.getRoles()))") // ✅ Asigna roles correctamente
     public abstract UserResponse toResponse(User user);
 
+    // 🔥 Método para mapear los roles correctamente
     protected List<String> mapRoleNames(List<Role> roles) {
-        return roles == null ? null : roles.stream().map(Role::getName).collect(Collectors.toList());
+        return (roles == null || roles.isEmpty()) ? List.of() : roles.stream().map(Role::getName).collect(Collectors.toList());
     }
 
     // Métodos para convertir objetos a String
@@ -72,7 +68,3 @@ public abstract class UserMapper {
         return position != null ? position.getName() : null;
     }
 }
-
-
-
-

@@ -1,5 +1,12 @@
 package com.datacenter.GRH.application.useCases;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,9 +19,6 @@ import com.datacenter.GRH.infrastructure.adapters.in.rest.controllers.requests.R
 import com.datacenter.GRH.infrastructure.adapters.in.rest.controllers.responses.UserResponse;
 import com.datacenter.GRH.infrastructure.mappers.UserMapper;
 import com.datacenter.GRH.infrastructure.ports.out.UserOutputPort;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RegisterUserUseCaseTest {
@@ -43,10 +47,9 @@ class RegisterUserUseCaseTest {
         when(userMapper.toUser(request)).thenReturn(user);
         when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
         when(userOutputPort.save(user)).thenReturn(user);
- 
 
         // Act
-        UserResponse response = registerUserUseCase.execute(request);
+        UserResponse response = registerUserUseCase.execute(request, null);
 
         // Assert
         assertNotNull(response);
@@ -62,7 +65,7 @@ class RegisterUserUseCaseTest {
 
         // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            registerUserUseCase.execute(request);
+            registerUserUseCase.execute(request, null);
         });
 
         assertEquals("El número de documento ya está registrado.", exception.getMessage());

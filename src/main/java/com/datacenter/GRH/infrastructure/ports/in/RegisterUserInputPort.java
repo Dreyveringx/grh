@@ -4,5 +4,5 @@ import com.datacenter.GRH.infrastructure.adapters.in.rest.controllers.requests.R
 import com.datacenter.GRH.infrastructure.adapters.in.rest.controllers.responses.UserResponse;
 
 public interface RegisterUserInputPort {
-    UserResponse execute(RegisterUserRequest request);
+    UserResponse execute(RegisterUserRequest request, String adminDocumentNumber); // ✅ Agregar el segundo parámetro
 }

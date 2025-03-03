@@ -1,16 +1,18 @@
-package com.datacenter.GRH.domain.services;
+package com.datacenter.GRH.infrastructure.adapters.out.databases;
 
 import com.datacenter.GRH.domain.models.Role;
 import com.datacenter.GRH.infrastructure.ports.out.RoleOutputPort;
-import com.datacenter.GRH.infrastructure.adapters.out.databases.RoleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Service
+@Repository
+@Primary // ✅ Esto indica a Spring que esta es la implementación principal
 @RequiredArgsConstructor
-public class RoleService implements RoleOutputPort {
+public class RoleRepositoryAdapter implements RoleOutputPort {
     private final RoleRepository roleRepository;
 
     @Override
@@ -20,10 +22,6 @@ public class RoleService implements RoleOutputPort {
 
     @Override
     public Role save(Role role) {
-        return roleRepository.save(role); // ✅ Asegurar que devuelve Role
+        return roleRepository.save(role);
     }
-    public Role createRole(Role role) {
-        return roleRepository.save(role); // ✅ Método agregado
-    }
-    
 }

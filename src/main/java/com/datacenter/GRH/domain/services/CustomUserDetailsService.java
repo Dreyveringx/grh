@@ -16,25 +16,30 @@ import java.util.List;
     @Service
     @RequiredArgsConstructor
     public class CustomUserDetailsService implements UserDetailsService {
-
+    
         private final UserRepository userRepository;
-
+    
         @Override
         public UserDetails loadUserByUsername(String documentNumber) throws UsernameNotFoundException {
-            // Buscar el usuario en la base de datos usando documentNumber
             User user = userRepository.findByDocumentNumber(documentNumber)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con documento: " + documentNumber));
-
-            // Convertir los roles a una lista de SimpleGrantedAuthority
+                    .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con documento: " + documentNumber));
+    
+            // Convertimos roles y permisos a autoridades de Spring Security
             List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName())) // Prefijo "ROLE_"
+                .flatMap(role -> {
+                    List<SimpleGrantedAuthority> roleAuthorities = role.getPermissions().stream()
+                            .map(permission -> new SimpleGrantedAuthority("PERMISSION_" + permission.getName()))
+                            .collect(Collectors.toList());
+                    roleAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+                    return roleAuthorities.stream();
+                })
                 .collect(Collectors.toList());
-
-            // Crear un UserDetails con la información del usuario
-            return org.springframework.security.core.userdetails.User
-                .withUsername(user.getDocumentNumber()) // ✅ Usamos el número de documento en lugar del email
-                .password(user.getPassword())
-                .authorities(authorities)
-                .build();
+    
+            return new org.springframework.security.core.userdetails.User(
+                    user.getDocumentNumber(),
+                    user.getPassword(),
+                    authorities
+            );
         }
     }
+    

@@ -14,5 +14,7 @@ public interface RoleMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
+    @Mapping(target = "modules", ignore = true) // ✅ Agregado
+    @Mapping(target = "permissions", ignore = true) // ✅ Agregado
     Role toRole(CreateRoleRequest request);
 }

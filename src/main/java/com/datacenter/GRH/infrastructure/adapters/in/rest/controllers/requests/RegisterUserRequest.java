@@ -23,5 +23,7 @@ public class RegisterUserRequest {
     @NotBlank(message = "El correo es obligatorio")
     @Email(message = "El formato del correo es inválido")
     private String email;
-    
+
+    @NotBlank(message = "El rol del usuario es obligatorio")
+    private String role; // 🔥 Se añade el campo de rol
 }

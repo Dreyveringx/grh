@@ -4,15 +4,15 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "modules", schema = "private")
-@Getter
-@Setter
+@Table(name = "permissions", schema = "private")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Module {
+public class Permission {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String name;

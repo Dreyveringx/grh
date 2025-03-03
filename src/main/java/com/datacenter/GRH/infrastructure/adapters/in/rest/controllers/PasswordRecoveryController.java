@@ -1,87 +1,73 @@
 package com.datacenter.GRH.infrastructure.adapters.in.rest.controllers;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.datacenter.GRH.application.useCases.FindUserByEmailUseCase;
-import com.datacenter.GRH.application.useCases.UpdateUserUseCase;
 import com.datacenter.GRH.domain.models.User;
-import com.datacenter.GRH.domain.services.EmailService;
 import com.datacenter.GRH.domain.services.UserService;
+import com.datacenter.GRH.infrastructure.adapters.in.rest.controllers.requests.PasswordResetRequest;
 import com.datacenter.GRH.infrastructure.adapters.out.security.JwtUtil;
 
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class PasswordRecoveryController {
 
-    private final FindUserByEmailUseCase findUserByEmailUseCase;
-    private final UpdateUserUseCase updateUserUseCase;
-    private final EmailService emailService;
-    private final PasswordEncoder passwordEncoder;
-    private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        if (email == null || email.isEmpty()) {
-            return ResponseEntity.badRequest().body("⚠️ El email es obligatorio.");
+    public ResponseEntity<String> forgotPassword(@RequestBody PasswordResetRequest request) {
+        if (request == null || request.getDocumentNumber() == null || request.getDocumentNumber().isEmpty()) {
+            return ResponseEntity.badRequest().body("⚠️ El número de documento es obligatorio.");
         }
 
-        User user = userService.findByEmail(email);
+        User user = userService.findByDocumentNumber(request.getDocumentNumber());
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("⚠️ No existe un usuario con este email.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("⚠️ No existe un usuario con este número de documento.");
         }
 
-        // Generar un token de recuperación (válido por 15 min)
-        String token = jwtUtil.generateRecoveryToken(user.getEmail());
+        String token = jwtUtil.generateRecoveryToken(user.getDocumentNumber());
 
-        // Enviar email con el enlace de recuperación apuntando al frontend de Angular
-        String resetLink = "http://localhost:4200/restablecer?token=" + token;
-        emailService.sendEmail(user.getEmail(), "Recuperación de contraseña",
-                "Haz clic en el siguiente enlace para restablecer tu contraseña: " + resetLink);
-
-        return ResponseEntity.ok("📩 Se ha enviado un correo con instrucciones.");
+        return ResponseEntity.ok("🔑 Token de recuperación generado: " + token);
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
-        String token = request.get("token");
-        String newPassword = request.get("newPassword");
-        String confirmPassword = request.get("confirmPassword");
-
-        if (token == null || newPassword == null || confirmPassword == null) {
+    public ResponseEntity<String> resetPassword(@RequestBody PasswordResetRequest request) {
+        if (request.getToken() == null || request.getNewPassword() == null || request.getConfirmPassword() == null) {
             return ResponseEntity.badRequest().body("⚠️ Token y contraseñas son obligatorios.");
         }
 
-        if (!newPassword.equals(confirmPassword)) {
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             return ResponseEntity.badRequest().body("⚠️ Las contraseñas no coinciden.");
         }
 
-        // Extraer email desde el token
-        String email;
         try {
-            email = jwtUtil.extractUsername(token);
+            // 🔥 Extraer el número de documento desde el token
+            String documentNumber = jwtUtil.extractDocumentNumber(request.getToken());
+            User user = userService.findByDocumentNumber(documentNumber);
+
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("⚠️ Usuario no encontrado.");
+            }
+
+            // ✅ Encriptar la nueva contraseña antes de guardarla
+            String encryptedPassword = passwordEncoder.encode(request.getNewPassword());
+            user.setPassword(encryptedPassword);
+
+            userService.updateUser(user); // ✅ Guardar la nueva contraseña en la base de datos
+
+            return ResponseEntity.ok("✅ Contraseña actualizada correctamente.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("⚠️ Token inválido o expirado.");
         }
-
-        // Buscar usuario por email
-        User user = findUserByEmailUseCase.findByEmail(email);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("⚠️ Usuario no encontrado.");
-        }
-
-        // Actualizar contraseña
-        user.setPassword(passwordEncoder.encode(newPassword));
-        updateUserUseCase.updateUser(user);
-
-        return ResponseEntity.ok("✅ Contraseña actualizada correctamente.");
     }
 }

@@ -1,13 +1,13 @@
 package com.datacenter.GRH.domain.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Entity
+@Table(name = "role", schema = "private")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,12 +17,29 @@ public class Role {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "company_id", nullable = false)
+    @JoinColumn(name = "company_id")
     private Company company;
 
     private String name;
     private String description;
 
+    @ManyToMany
+    @JoinTable(name = "role_modules", schema = "private", 
+        joinColumns = @JoinColumn(name = "role_id"), 
+        inverseJoinColumns = @JoinColumn(name = "module_id"))
+    private List<Module> modules;
+
+    @ManyToMany
+    @JoinTable(name = "role_permissions", schema = "private", 
+        joinColumns = @JoinColumn(name = "role_id"), 
+        inverseJoinColumns = @JoinColumn(name = "permission_id"))
+        private Set<Permission> permissions; // ✅ Ahora usa la entidad correcta
+
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }
