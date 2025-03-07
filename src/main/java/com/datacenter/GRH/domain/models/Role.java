@@ -27,13 +27,13 @@ public class Role {
     @JoinTable(name = "role_modules", schema = "private", 
         joinColumns = @JoinColumn(name = "role_id"), 
         inverseJoinColumns = @JoinColumn(name = "module_id"))
-    private List<Module> modules;
+    private List<Modules> modules;
 
     @ManyToMany
     @JoinTable(name = "role_permissions", schema = "private", 
         joinColumns = @JoinColumn(name = "role_id"), 
         inverseJoinColumns = @JoinColumn(name = "permission_id"))
-        private Set<Permission> permissions; // ✅ Ahora usa la entidad correcta
+        private Set<Permission> permissions;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

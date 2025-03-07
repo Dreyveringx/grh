@@ -1,6 +1,7 @@
 package com.datacenter.GRH.infrastructure.mappers;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.mapstruct.*;
 import com.datacenter.GRH.domain.models.*;
@@ -42,8 +43,8 @@ public abstract class UserMapper {
     @Mapping(target = "roles", expression = "java(mapRoleNames(user.getRoles()))") // ✅ Asigna roles correctamente
     public abstract UserResponse toResponse(User user);
 
-    // 🔥 Método para mapear los roles correctamente
-    protected List<String> mapRoleNames(List<Role> roles) {
+    //Método para mapear los roles correctamente
+    protected List<String> mapRoleNames(Set<Role> roles) {
         return (roles == null || roles.isEmpty()) ? List.of() : roles.stream().map(Role::getName).collect(Collectors.toList());
     }
 
